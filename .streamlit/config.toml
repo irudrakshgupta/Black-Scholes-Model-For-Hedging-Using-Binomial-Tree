@@ -1,0 +1,17 @@
+[theme]
+# Light mode settings
+primaryColor = "#00ADB5"
+backgroundColor = "#0E1117"
+secondaryBackgroundColor = "#1A1C24"
+textColor = "#F8F9FA"
+font = "sans serif"
+
+[server]
+maxUploadSize = 200
+enableXsrfProtection = true
+enableCORS = true
+
+[client]
+showErrorDetails = false
+toolbarMode = "minimal"
+theme = "dark" 

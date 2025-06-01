@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black-Scholes Option Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .result-box {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Black-Scholes Option Calculator</h1>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="optionForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="stock_price" class="form-label">Stock Price ($)</label>
+                                    <input type="number" class="form-control" id="stock_price" step="0.01" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="strike_price" class="form-label">Strike Price ($)</label>
+                                    <input type="number" class="form-control" id="strike_price" step="0.01" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="time_to_maturity" class="form-label">Time to Maturity (years)</label>
+                                    <input type="number" class="form-control" id="time_to_maturity" step="0.01" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="risk_free_rate" class="form-label">Risk-free Rate (%)</label>
+                                    <input type="number" class="form-control" id="risk_free_rate" step="0.01" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="volatility" class="form-label">Volatility (%)</label>
+                                    <input type="number" class="form-control" id="volatility" step="0.01" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Option Type</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="option_type" id="call" value="call" checked>
+                                    <label class="form-check-label" for="call">Call Option</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="option_type" id="put" value="put">
+                                    <label class="form-check-label" for="put">Put Option</label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">Calculate</button>
+                        </form>
+
+                        <div id="results" class="mt-4" style="display: none;">
+                            <h4 class="mb-3">Results:</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="result-box">
+                                        <strong>Option Price:</strong> <span id="price"></span>
+                                    </div>
+                                    <div class="result-box">
+                                        <strong>Delta:</strong> <span id="delta"></span>
+                                    </div>
+                                    <div class="result-box">
+                                        <strong>Gamma:</strong> <span id="gamma"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="result-box">
+                                        <strong>Theta:</strong> <span id="theta"></span>
+                                    </div>
+                                    <div class="result-box">
+                                        <strong>Vega:</strong> <span id="vega"></span>
+                                    </div>
+                                    <div class="result-box">
+                                        <strong>Rho:</strong> <span id="rho"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('optionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                stock_price: parseFloat(document.getElementById('stock_price').value),
+                strike_price: parseFloat(document.getElementById('strike_price').value),
+                time_to_maturity: parseFloat(document.getElementById('time_to_maturity').value),
+                risk_free_rate: parseFloat(document.getElementById('risk_free_rate').value) / 100,
+                volatility: parseFloat(document.getElementById('volatility').value) / 100,
+                option_type: document.querySelector('input[name="option_type"]:checked').value
+            };
+
+            try {
+                const response = await fetch('/api/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('results').style.display = 'block';
+                    document.getElementById('price').textContent = `$${result.price}`;
+                    document.getElementById('delta').textContent = result.delta;
+                    document.getElementById('gamma').textContent = result.gamma;
+                    document.getElementById('theta').textContent = result.theta;
+                    document.getElementById('vega').textContent = result.vega;
+                    document.getElementById('rho').textContent = result.rho;
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error calculating option values');
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html> 
