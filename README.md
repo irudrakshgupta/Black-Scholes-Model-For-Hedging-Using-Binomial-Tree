@@ -1,84 +1,125 @@
-# Black-Scholes Option Pricing & Hedging Tool
+# Black-Scholes-Merton Binomial Tree Model for Option Pricing and Hedging
 
-A comprehensive options analysis and trading platform built with Python and Streamlit. This tool provides advanced option pricing, risk analysis, and portfolio management capabilities.
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+A comprehensive financial modeling tool that implements advanced option pricing and hedging strategies using the Black-Scholes-Merton framework and binomial tree methods. This interactive application provides sophisticated analytics for derivatives pricing, risk management, and dynamic hedging simulations.
 
-### Core Option Pricing
-- Black-Scholes option pricing
-- Greeks calculation (Delta, Gamma, Theta, Vega, Rho)
-- Interactive price and Greeks visualization
-- Implied volatility calculator
+## 📚 Table of Contents
 
-### Advanced Volatility Analysis
-- GARCH model for volatility forecasting
-- Volatility surface calibration
-- Volatility cone analysis
-- Term structure visualization
-- Historical vs implied volatility comparison
-- Machine learning-based volatility prediction
+- [Core Financial Concepts](#core-financial-concepts)
+- [Mathematical Models](#mathematical-models)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage Examples](#usage-examples)
+- [Project Structure](#project-structure)
+- [Technical Implementation](#technical-implementation)
+- [Contributing](#contributing)
+- [License](#license)
 
-### Risk Management
-- Value at Risk (VaR) calculator
-- Expected Shortfall (ES) metrics
-- Stress testing scenarios
-- Correlation analysis
-- Portfolio optimization
-- Risk-adjusted performance metrics
-  - Sharpe ratio
-  - Sortino ratio
-  - Maximum drawdown
+## 🎓 Core Financial Concepts
 
-### Option Strategies
-- Complex spread strategies:
-  - Iron Condor
-  - Butterfly spreads
-  - Calendar spreads
-- Strategy comparison tool
-- P&L attribution analysis
-- Break-even calculator
-- Roll analysis
-- Options chain visualization
+### Option Basics
+- **Options**: Financial derivatives giving the right (not obligation) to buy (call) or sell (put) an asset at a predetermined price
+- **Strike Price (K)**: The predetermined price at which the option can be exercised
+- **Maturity (T)**: Time until option expiration
+- **Option Types**:
+  - European: Can only be exercised at maturity
+  - American: Can be exercised at any time until maturity
 
-### Transaction Cost Analysis
-- Bid-ask spread impact calculator
-- Commission cost analysis
-- Slippage estimation
-- Market impact modeling
-- Total cost of trading analysis
+### Risk Measures (Greeks)
+- **Delta (Δ)**: Measures change in option price relative to underlying asset price
+- **Gamma (Γ)**: Rate of change in delta (second derivative)
+- **Theta (Θ)**: Time decay of option value
+- **Vega (V)**: Sensitivity to volatility changes
+- **Rho (ρ)**: Sensitivity to interest rate changes
 
-### Advanced Pricing Models
-- Heston stochastic volatility model
-- Merton jump diffusion model
-- Local volatility model
-- American option pricing
-- Barrier option pricing
-- Monte Carlo simulation
+### Volatility Concepts
+- **Historical Volatility**: Calculated from past price movements
+- **Implied Volatility**: Derived from market prices using BSM model
+- **Volatility Surface**: 3D representation of implied volatility across strikes and maturities
+- **Volatility Smile**: Pattern of implied volatility varying with strike price
 
-### Portfolio Management
-- Portfolio rebalancing calculator
-- Correlation matrix visualization
-- Factor analysis
-- Portfolio attribution
+## 📐 Mathematical Models
+
+### Black-Scholes-Merton Model
+The fundamental equation for option pricing:
+```math
+∂V/∂t + (1/2)σ²S²(∂²V/∂S²) + rS(∂V/∂S) - rV = 0
+```
+Where:
+- V: Option value
+- S: Stock price
+- σ: Volatility
+- r: Risk-free rate
+- t: Time
+
+### Binomial Tree Model
+- Based on Cox-Ross-Rubinstein framework
+- Discrete-time approximation of continuous BSM model
+- Parameters:
+  - u = e^(σ√Δt): Up factor
+  - d = 1/u: Down factor
+  - p = (e^(rΔt) - d)/(u - d): Risk-neutral probability
+
+### Advanced Models
+- **Monte Carlo Simulation**: For complex path-dependent options
+- **Reinforcement Learning**: Dynamic hedging optimization
+- **Transaction Cost Analysis**: Real-world trading friction modeling
+
+## 🚀 Features
+
+### 1. Option Price Calculator
+- Black-Scholes-Merton pricing
+- Binomial tree implementation
+- Greeks calculation
+- Implied volatility solver
+
+### 2. Greeks Visualization
+- Interactive 2D/3D plots
+- Sensitivity analysis
+- Time decay visualization
+- Greek surfaces
+
+### 3. Volatility Analysis
+- Historical volatility calculation
+- Implied volatility surface
+- Volatility smile fitting
+- Term structure analysis
+
+### 4. Option Strategy Builder
+- Multiple legs support
+- P&L analysis
+- Risk metrics
+- Strategy visualization
+
+### 5. Hedging Tools
+- Delta-neutral strategies
+- Dynamic rebalancing
+- Transaction cost optimization
+- Hedge effectiveness metrics
+
+### 6. Risk Management
+- VaR calculation
+- Stress testing
 - Scenario analysis
-- Dynamic hedging simulation
+- Portfolio optimization
 
-### Machine Learning Features
-- Volatility forecasting
-- Regime detection
-- Anomaly detection
-- Trading signal generation
-- Feature importance analysis
+### 7. Machine Learning Integration
+- RL-based hedging
+- Volatility prediction
+- Risk factor analysis
+- Pattern recognition
 
-## Installation
+## 💻 Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/options-analysis-tool.git
-cd options-analysis-tool
+git clone https://github.com/yourusername/BSM-Binomial-Tree-Model.git
+cd BSM-Binomial-Tree-Model
 ```
 
-2. Create and activate a virtual environment:
+2. Create and activate virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -89,65 +130,121 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Usage
+## 📊 Usage Examples
 
-1. Start the Streamlit app:
-```bash
-streamlit run streamlit_app.py
+### Basic Option Pricing
+```python
+from models.black_scholes import BlackScholes
+
+bs = BlackScholes()
+result = bs.price_and_greeks(
+    S=100,    # Stock price
+    K=100,    # Strike price
+    T=1,      # Time to maturity (years)
+    r=0.05,   # Risk-free rate
+    sigma=0.2 # Volatility
+)
+print(f"Option Price: {result.price:.2f}")
+print(f"Delta: {result.delta:.4f}")
 ```
 
-2. Open your browser and navigate to `http://localhost:8501`
+### Binomial Tree Analysis
+```python
+from models.binomial_tree import BinomialTree
 
-## Analysis Tools
+bt = BinomialTree(steps=100)
+result = bt.price(
+    S=100,
+    K=100,
+    T=1,
+    r=0.05,
+    sigma=0.2,
+    option_type='american'
+)
+```
 
-### Volatility Analysis
-- Historical volatility calculation with configurable lookback periods
-- Implied volatility surface fitting and visualization
-- GARCH model parameter estimation and forecasting
-- Volatility regime detection using machine learning
+## 🗂 Project Structure
 
-### Risk Metrics
-- Portfolio VaR calculation using multiple methods:
-  - Historical simulation
-  - Parametric VaR
-  - Monte Carlo simulation
-- Expected Shortfall computation
-- Stress testing with customizable scenarios
-- Correlation analysis and risk decomposition
+```
+├── models/
+│   ├── black_scholes.py       # Core BSM implementation
+│   ├── binomial_tree.py       # Binomial model
+│   ├── advanced_pricing.py    # Complex derivatives
+│   ├── advanced_volatility.py # Vol surface/smile
+│   ├── hedge_ratio.py        # Hedging calculations
+│   ├── portfolio_management.py # Portfolio tools
+│   ├── risk_management.py    # Risk metrics
+│   ├── rl_hedger.py         # ML-based hedging
+│   └── transaction_costs.py  # Trading frictions
+├── utils/
+│   └── visualization.py      # Plotting tools
+├── gui/
+│   └── hedger_gui.py        # Streamlit interface
+├── templates/
+│   └── index.html           # Web templates
+├── streamlit_app.py         # Main application
+├── requirements.txt         # Dependencies
+└── README.md               # Documentation
+```
 
-### Option Strategies
-- Pre-built option strategies with customizable parameters
-- Strategy P&L visualization
-- Greeks analysis for complex positions
-- Roll analysis for position management
-- Break-even probability calculation
+## 🔧 Technical Implementation
 
-### Portfolio Management
-- Mean-variance optimization
-- Risk factor analysis
-- Performance attribution
-- Rebalancing recommendations
-- Transaction cost optimization
+### Core Components
 
-## Data Sources
-- Real-time market data integration
-- Historical price data analysis
-- Volatility surface calibration
-- Options chain data
-- Risk factor data
+1. **Black-Scholes Engine**
+   - Analytical solutions for European options
+   - Greeks calculation using partial derivatives
+   - Implied volatility solver using Newton-Raphson
 
-## Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+2. **Binomial Tree Engine**
+   - Flexible n-step implementation
+   - American option early exercise
+   - Path-dependent option support
 
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+3. **Volatility Module**
+   - GARCH model implementation
+   - Surface fitting using cubic splines
+   - Volatility forecasting
 
-## Acknowledgments
-- Black-Scholes model implementation
-- Heston model calibration
-- GARCH model implementation
-- Portfolio optimization algorithms
-- Risk management tools
+4. **Risk Management**
+   - Historical VaR calculation
+   - Monte Carlo VaR simulation
+   - Conditional VaR (Expected Shortfall)
 
-## Contact
-For questions and feedback, please open an issue on GitHub. 
+5. **Machine Learning Integration**
+   - Deep Q-Learning for hedging
+   - Neural network architecture
+   - Experience replay buffer
+
+### Performance Optimizations
+- Vectorized numpy operations
+- Cython for intensive calculations
+- Parallel processing for simulations
+- Memory-efficient data structures
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📧 Contact
+
+Your Name - [your.email@example.com](mailto:your.email@example.com)
+
+Project Link: [https://github.com/yourusername/BSM-Binomial-Tree-Model](https://github.com/yourusername/BSM-Binomial-Tree-Model)
+
+## 🙏 Acknowledgments
+
+- Black-Scholes-Merton model theory
+- Cox-Ross-Rubinstein binomial model
+- Modern derivatives pricing literature
+- Open-source financial libraries 
